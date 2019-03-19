@@ -9,6 +9,7 @@
 {% set GFS_DIR = "/projects/0/aams/gfs" %}
 
 # set password and email to download GFS data from UCAR archive
+# create a login at https://rda.ucar.edu/ and use credentials below
 {% set UCAR_PASSWORD = "password" %}
 {% set UCAR_EMAIL = "registered@email.com" %}
 
