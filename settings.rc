@@ -14,5 +14,5 @@
 {% set UCAR_EMAIL = "registered@email.com" %}
 
 # set local netcdf file containing watertemperatures from rijkswterstaat
-{% set WATERTEMPNC = "$CYLC_SUITE_DEF_PATH/watertemp.nc" %}
+{% set WATERTEMPNC = "$CYLC_SUITE_DEF_PATH/watertemp/watertemp.nc" %}
 
