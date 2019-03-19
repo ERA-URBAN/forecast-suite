@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+#SBATCH --time=00:05:00
+#SBATCH --ntasks=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --constraint=haswell
+#SBATCH --cpus-per-task=12
+#SBATCH --distribution=block:block
+#SBATCH --job-name=wrf_real
+#SBATCH --partition=short
+
+srun ./real.exe

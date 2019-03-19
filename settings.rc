@@ -1,0 +1,17 @@
+# set start and stop time of simulation
+{% set initial_cycle_point = "20190301T00" %}
+{% set final_cycle_point  = "20190328T00" %}
+
+# wrf run directory
+{% set WRF_RUN_DIR = "/projects/0/aams/forecast" %}
+
+# set directory to store gfs files
+{% set GFS_DIR = "/projects/0/aams/gfs" %}
+
+# set password and email to download GFS data from UCAR archive
+{% set UCAR_PASSWORD = "password" %}
+{% set UCAR_EMAIL = "registered@email.com" %}
+
+# set local netcdf file containing watertemperatures from rijkswterstaat
+{% set WATERTEMPNC = "~/SST/watertemp.nc" %}
+

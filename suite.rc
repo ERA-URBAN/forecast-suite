@@ -1,0 +1,169 @@
+#!jinja2
+
+%include settings.rc
+
+[scheduling]
+    initial cycle point = {{ initial_cycle_point }}
+    final cycle point = {{ final_cycle_point }}
+    [[special tasks]]
+        clock-trigger = download_gfs(), download_gfs_archive(P4D)
+        clock-expire = download_gfs(P4D), download_gfs_archive(P100D)
+    [[dependencies]]
+        # Initial cycle point
+        [[[R1]]]
+            graph = """
+                download_gfs
+                (download_gfs|download_gfs_archive) => wrf_init
+                download_gfs:expired => download_gfs_archive
+                wrf_init => wps => wrf_real => copy_urb
+                copy_urb:finish => wrf_run => postprocess
+                wrf_run => !copy_urb # suicide
+                download_gfs:finish => !download_gfs_archive
+                download_gfs_archive:finish => !download_gfs
+                wrf_run:fail => retry_timestep
+                wrf_run => !retry_timestep # suicide 
+                retry_timestep => !wrf_run # suicide
+            """
+        # Repeat every 24 hours, starting 24 hours
+        # after initial cylce point
+        [[[+PT24H/PT24H]]]
+            graph = """
+                download_gfs
+                (download_gfs|download_gfs_archive) => wrf_init
+                download_gfs:expired => download_gfs_archive
+                postprocess[-PT24H] => wrf_init
+                (wrf_run[-PT24H]|retry_timestep[-PT24H]) => wps => wrf_init => wrf_real => copy_urb => prepare_sst
+                prepare_sst:finish => wrf_run => postprocess
+                (wrf_run|retry_timestep) => !copy_urb # suicide
+                (wrf_run|retry_timestep) => !prepare_sst # suicide
+                download_gfs:finish => !download_gfs_archive
+                download_gfs_archive:finish => !download_gfs
+                wrf_run:fail => retry_timestep
+                wrf_run => !retry_timestep # suicide 
+                retry_timestep => !wrf_run # suicide                
+            """
+[runtime]
+    [[root]] # suite defaults
+        [[[job]]]
+            batch system = background
+
+    [[copy_urb]]
+        script = copy_urb.py $CYLC_TASK_CYCLE_POINT $CYLC_SUITE_DEF_PATH 24 -i 8,24,24,24
+
+    [[postprocess]]
+        script = postprocess.py $CYLC_TASK_CYCLE_POINT $CYLC_SUITE_DEF_PATH
+
+    [[prepare_sst]]
+        script = '''
+for domain in 3 4; do
+  prepare_sst.sh {{ WATERTEMPNC }} $WHEN ~/SST/domain_d0${domain}.grid {{ WRF_RUN_DIR }}/sst_d0${domain}.nc
+  copy_sst_init.sh {{ WRF_RUN_DIR }}/sst_d0${domain}.nc {{WRF_RUN_DIR }}/wrfinput_d0${domain}
+  sst.py SST {{ WRF_RUN_DIR }}/sst_d0${domain}.nc {{ WRF_RUN_DIR }}/wrfinput_d0${domain}
+  sst.py TSK ./tsk_new.nc {{ WRF_RUN_DIR }}/wrfinput_d0${domain}
+  rm -r sst_new.nc tsk_old.nc tsk_new.nc lsmask.nc
+done
+'''
+        [[[environment]]]
+            WHEN=$(date -d "$(echo $CYLC_TASK_CYCLE_POINT | cut -c 1-8) + $(echo $CYLC_TASK_CYCLE_POINT | cut -c 9-10) hours" +%Y-%m-%d)
+
+    [[download_gfs]]
+        pre-script = 'mkdir -p $TARGETDIR'
+        script = get_gfs.pl data $CYLC_TASK_CYCLE_POINT 0 48 6 all all $TARGETDIR
+        #script = 'sleep 2'
+        [[[environment]]]
+            TARGETDIR = {{ GFS_DIR }}/$CYLC_TASK_CYCLE_POINT
+
+        [[[job]]]
+            execution retry delays = 94*PT60M
+
+    [[download_gfs_archive]]
+        script = """
+download_gfs.sh {{ UCAR_EMAIL }} {{ UCAR_PASSWORD }} $YR $MNTH $DY $TARGETDIR
+"""
+        [[[environment]]]
+            YR=$(date -d "$(echo $CYLC_TASK_CYCLE_POINT | cut -c 1-8) + $(echo $CYLC_TASK_CYCLE_POINT | cut -c 9-10) hours + 1 days" +%Y)
+            MNTH=$(date -d "$(echo $CYLC_TASK_CYCLE_POINT | cut -c 1-8) + $(echo $CYLC_TASK_CYCLE_POINT | cut -c 9-10) hours + 1 days" +%m)
+            DY=$(date -d "$(echo $CYLC_TASK_CYCLE_POINT | cut -c 1-8) + $(echo $CYLC_TASK_CYCLE_POINT | cut -c 9-10) hours + 1 days" +%d)
+            TARGETDIR = {{ GFS_DIR }}/$CYLC_TASK_CYCLE_POINT
+
+
+    [[wrf_init]]
+        script = """
+wrf_init.py $CYLC_TASK_CYCLE_POINT 48
+"""
+        [[[job]]]
+            batch system = background
+        [[[directives]]]
+            
+    [[obsproc_init]]
+        script = """
+wrfda_obsproc_init.py $CYLC_TASK_CYCLE_POINT
+"""
+        [[[job]]]
+            batch system = background
+        [[[directives]]]
+            
+    [[wrf_real]]
+        script = """
+run_real.py
+"""
+        [[[job]]]
+            batch system = background
+        [[[directives]]]
+            
+    [[wrf_run]]
+        script = """
+run_wrf.py
+"""
+        [[[job]]]
+            batch system = background
+        [[[directives]]]
+
+    [[retry_timestep]]
+        script = retry_wrf.py ${CYLC_TASK_CYCLE_POINT} ${CYLC_TASK_TRY_NUMBER}
+        [[[job]]]
+            execution retry delays = 5*PT1S # retry five times after 1-second delays
+            
+    [[obsproc_run]]
+        script = """
+wrfda_obsproc_run.py $CYLC_TASK_CYCLE_POINT
+"""
+        [[[job]]]
+            batch system = background
+        [[[directives]]]
+            
+    [[wrfda]]
+        script = """
+wrfda_run.py $CYLC_TASK_CYCLE_POINT
+"""
+        [[[job]]]
+            batch system = background
+        [[[directives]]]
+            
+    [[upp]]
+        script = """
+upp.py $CYLC_TASK_CYCLE_POINT
+"""
+        [[[job]]]
+            batch system = background
+        [[[directives]]]
+            
+
+    [[wps]]
+        pre-script = """
+wps_init.py $CYLC_TASK_CYCLE_POINT 48 {{ GFS_DIR }}/$CYLC_TASK_CYCLE_POINT
+"""
+        script = """
+wps_run.py
+"""
+        post-script = """
+wps_post.py
+"""
+        [[[job]]]
+            batch system = background
+            
+
+[visualization]
+    initial cycle point = {{ START }}
+    final cycle point   = {{ STOP }}
+    default node attributes = "style=filled", "fillcolor=grey"

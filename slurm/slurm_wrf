@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+#SBATCH --time=12:00:00
+#SBATCH --ntasks=24
+#SBATCH --ntasks-per-node=2
+#SBATCH --constraint=haswell
+#SBATCH --cpus-per-task=12
+#SBATCH --distribution=block:block
+#SBATCH --job-name=wrf
+
+srun ./wrf.exe
