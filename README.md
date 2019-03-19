@@ -63,7 +63,7 @@ cylc trigger forecast-suite TIMESTEP/TASK
 ```
 where both TIMESTEP and TASK should be substituted for the timestep and taskname of the failed task.
 
-If at some point, the cylc suite needs to be restarted so it continuous from the point where it left of (for example if the cylc process gets killed on the login node), the following command can be used:
+If at some point, the cylc suite needs to be restarted so it continuous from the point where it left of (for example if the cylc process gets killed on the login node), the following command can be used (you may need to remove the cylc contact file but this will be pointed out if you need to when you run the command):
 ```
 cylc restart forecast-suite
 ```
