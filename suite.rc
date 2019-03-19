@@ -164,6 +164,6 @@ wps_post.py
             
 
 [visualization]
-    initial cycle point = {{ START }}
-    final cycle point   = {{ STOP }}
+    initial cycle point = {{ initial_cycle_point }}
+    final cycle point   = {{ final_cycle_point }}
     default node attributes = "style=filled", "fillcolor=grey"
