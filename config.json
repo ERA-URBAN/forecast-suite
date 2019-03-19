@@ -8,7 +8,7 @@
         "upp_archive_dir": "", 
         "upp_dir": "", 
         "work_dir": "/projects/0/aams/forecast", 
-        "wps_dir": "/home/user/build/WPS-forecast", 
+        "wps_dir": "/projects/0/aams/WPS-forecast", 
         "wrf_dir": "/projects/0/aams/WRFV3", 
         "wrf_run_dir": "/projects/0/aams/forecast", 
         "wrfda_dir": ""
@@ -25,10 +25,10 @@
         "slurm_geogrid.exe": "", 
         "slurm_metgrid.exe": "", 
         "slurm_obsproc.exe": "", 
-        "slurm_real.exe": "/home/user/cylc-suites/forecast/slurm/slurm_real", 
+        "slurm_real.exe": "/home/user/cylc-suites/forecast-suite/slurm/slurm_real", 
         "slurm_ungrib.exe": "", 
         "slurm_updatebc.exe": "", 
-        "slurm_wrf.exe": "/home/user/cylc-suites/forecast/slurm/slurm_wrf"
+        "slurm_wrf.exe": "/home/user/cylc-suites/forecast-suite/slurm/slurm_wrf"
     }, 
     "options_upp": {
         "upp": "", 
@@ -44,12 +44,12 @@
     "options_wps": {
         "geogrid.tbl": "", 
         "metgrid.tbl": "", 
-        "namelist.wps": "/home/user/cylc-suites/forecast/namelist/namelist.wps.summer", 
+        "namelist.wps": "/home/user/cylc-suites/forecast-suite/namelist/namelist.wps.summer", 
         "run_hours": "48", 
         "vtable": "Vtable.GFS"
     }, 
     "options_wrf": {
-        "namelist.input": "/home/user/cylc-suites/forecast/namelist/namelist.forecast.summer", 
+        "namelist.input": "/home/user/cylc-suites/forecast-suite/namelist/namelist.forecast.summer", 
         "urbparm.tbl": ""
     }, 
     "options_wrfda": {
