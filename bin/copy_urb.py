@@ -35,10 +35,10 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Initialize obsproc.')
     parser.add_argument('datestring', metavar='N', type=str,
                         help='Date-time string from cylc suite')
-    parser.add_argument('interval', metavar='I', type=int,
-                        help='interval between runs')
     parser.add_argument('cylcsuitedefpath', metavar='O', type=str,
                         help='Path of cylc suite definition')
+    parser.add_argument('interval', metavar='I', type=int,
+                        help='interval between runs')
     parser.add_argument('-i', '--index', help='delimited list index', type=lambda s: [int(item) for item in s.split(',')])
     # parse arguments
     args = parser.parse_args()
