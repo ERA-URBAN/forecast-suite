@@ -21,7 +21,7 @@ Now we can install the requirements of the forecast suite in the python virtual 
 ```
 pip install git+https://github.com/ERA-URBAN/wrfpy
 ```
-Download cylc from [the cylc website](https://cylc.github.io/) and install. Add the directory with the executable to the PATH variable in `~/.bashrc`.
+Download cylc from [the cylc website](https://cylc.github.io/) and install. Add the directory with the `cylc` executable to the PATH variable in `~/.bashrc`.
 
 With the command `deactivate` you can deactivate the python virtual environment if needed. It is time to logout and login so the changes to `~/.bashrc` take effect.
 
@@ -30,7 +30,7 @@ First make sure the vitual environment we created in the previous step is activa
 ```
 mkdir ~/cylc-suites
 cd ~/cylc-suites
-pip install git+https://github.com/ERA-URBAN/forecast-suite
+git clone https://github.com/ERA-URBAN/forecast-suite.git
 cylc register forecast-suite forecast-suite
 ```
 
