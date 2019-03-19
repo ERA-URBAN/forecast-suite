@@ -64,7 +64,10 @@ For more information on cylc please consult the [cylc website](https://cylc.gith
 The watertemperatures are downloaded and converted to netCDF on maq06. The netCDF file is copied using `scp` to cartisus via a cron job on maq06. Vice versa, the plots for the website are copied to maq06. In order for this to work, the cron jobs on maq06 should have the correct destination path, and being able to passwordless copy the files. The steps to get this working are described [here](http://www.linuxproblem.org/art_9.html).
 
 ## Cronjobs on maq06
-A couple of cronjobs are running on maq06 to copy the Rijkswaterstaat temperatures to copy the files to and from cartesius. These are `forecastcron.sh` and `cron_plot.sh`. If the forecast needs to be transferred into another account, these are the files that need to be adapted.
+A couple of cronjobs are running on maq06 to copy the Rijkswaterstaat temperatures to copy the files to and from cartesius. These are `forecastcron.sh` and `cron_plot.sh`. If the forecast needs to be transferred into another account, these are the files that need to be adapted. 
+
+`cron_plot.sh` copies results from `/projects/0/aams/${YEAR}-archive`, where ${YEAR} is substituted for the current year. If the archive directory used in the forecast is changed from this format, `cron_plot.sh` needs to be changed.
+
 The cronjob `watertempcron.sh` takes care of updating the netCDF file with watertemperatures locally on maq06 every hour.
 
 Below is a list of all cronjobs running on maq06:
