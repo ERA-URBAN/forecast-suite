@@ -14,5 +14,5 @@
 {% set UCAR_EMAIL = "registered@email.com" %}
 
 # set local netcdf file containing watertemperatures from rijkswterstaat
-{% set WATERTEMPNC = "~/SST/watertemp.nc" %}
+{% set WATERTEMPNC = "~/cylc-suites/forecast-suite/watertemp.nc" %}
 
