@@ -5,6 +5,15 @@ This repo contains the cylc suite for the WRF weather forecast.
 ## Instructions Cartesius 
 In order to get the forecast running on cartesius, follow the steps in this document.
 
+### Modules to load
+The following modules should be loaded for the forecast to run successfully. he following module load commands can be added to the `~/.bashrc` file:
+```
+module load nco
+module load hdf5/serial/intel/1.8.10-patch1
+module load netcdf
+module load ncl
+```
+
 ### Install WRFV3 and WPS
 WRFV3 v3.7.1 with changes to the urban module in order to have high resolution urban parameters, as well as recycling of urban temperatures from the previous day forecast, should be installed from the
 [ERA-URBAN github](https://www.github.com/ERA-URBAN/WRFV3). WPS can be installed from the [ERA-URBAN github](https://www.github.com/ERA-URBAN/WPS) as well.
