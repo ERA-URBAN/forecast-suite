@@ -63,6 +63,11 @@ cylc trigger forecast-suite TIMESTEP/TASK
 ```
 where both TIMESTEP and TASK should be substituted for the timestep and taskname of the failed task.
 
+If at some point, the cylc suite needs to be restarted so it continuous from the point where it left of (for example if the cylc process gets killed on the login node), the following command can be used:
+```
+cylc restart forecast-suite
+```
+
 ### Log files
 Cylc workflow engine keeps its log files in `~/cylc-run/forecast-suite`. Log files are ordened by timestep and taskname.
 
