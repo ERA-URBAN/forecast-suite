@@ -7,7 +7,7 @@
     final cycle point = {{ final_cycle_point }}
     [[special tasks]]
         clock-trigger = download_gfs(), download_gfs_archive(P4D)
-        clock-expire = download_gfs(P4D), download_gfs_archive(P100D)
+        clock-expire = download_gfs(P4D), download_gfs_archive(P1000D)
     [[dependencies]]
         # Initial cycle point
         [[[R1]]]
@@ -15,9 +15,10 @@
                 download_gfs
                 (download_gfs|download_gfs_archive) => wrf_init
                 download_gfs:expired => download_gfs_archive
-                wrf_init => wps => wrf_real => copy_urb
-                copy_urb:finish => wrf_run => postprocess
-                wrf_run => !copy_urb # suicide
+                wrf_init => wps => wrf_real => copy_urb => prepare_sst
+                prepare_sst:finish => wrf_run => postprocess
+                (wrf_run|retry_timestep) => !copy_urb # suicide
+                (wrf_run|retry_timestep) => !prepare_sst # suicide
                 download_gfs:finish => !download_gfs_archive
                 download_gfs_archive:finish => !download_gfs
                 wrf_run:fail => retry_timestep
@@ -56,7 +57,7 @@
     [[prepare_sst]]
         script = '''
 for domain in 3 4; do
-  prepare_sst.sh {{ WATERTEMPNC }} $WHEN ~/SST/domain_d0${domain}.grid {{ WRF_RUN_DIR }}/sst_d0${domain}.nc
+  prepare_sst.sh {{ WATERTEMPNC }} $WHEN $CYLC_SUITE_DEF_PATH/domain_d0${domain}.grid {{ WRF_RUN_DIR }}/sst_d0${domain}.nc
   copy_sst_init.sh {{ WRF_RUN_DIR }}/sst_d0${domain}.nc {{WRF_RUN_DIR }}/wrfinput_d0${domain}
   sst.py SST {{ WRF_RUN_DIR }}/sst_d0${domain}.nc {{ WRF_RUN_DIR }}/wrfinput_d0${domain}
   sst.py TSK ./tsk_new.nc {{ WRF_RUN_DIR }}/wrfinput_d0${domain}
