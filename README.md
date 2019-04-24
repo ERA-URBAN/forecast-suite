@@ -12,6 +12,7 @@ module load nco
 module load hdf5/serial/intel/1.8.10-patch1
 module load netcdf
 module load ncl
+module load cdo
 ```
 
 ### Install WRFV3 and WPS
