@@ -59,14 +59,14 @@ class retry_wrf(config):
     # empty nested dictionary
     self.retry_values = collections.defaultdict(dict)
     # define retry steps
-    self.retry_values[1]['time_step'] = 10
-    self.retry_values[1]['parent_time_step_ratio'] = [1, 5, 5, 5]
-    self.retry_values[2]['time_step'] = 8
-    self.retry_values[2]['parent_time_step_ratio'] = [1, 5, 5, 5]
-    self.retry_values[3]['time_step'] = 12
+    self.retry_values[1]['time_step'] = 50
+    self.retry_values[1]['parent_time_step_ratio'] = [1, 5, 5, 6]
+    self.retry_values[2]['time_step'] = 50
+    self.retry_values[2]['parent_time_step_ratio'] = [1, 5, 6, 5]
+    self.retry_values[3]['time_step'] = 60
     self.retry_values[3]['parent_time_step_ratio'] = [1, 6, 6, 6]
-    self.retry_values[4]['time_step'] = 6
-    self.retry_values[4]['parent_time_step_ratio'] = [1, 5, 5, 5]
+    self.retry_values[4]['time_step'] = 40
+    self.retry_values[4]['parent_time_step_ratio'] = [1, 8, 5, 5]
 
   def change_namelist(self):
     if self.retry_number in [1,2,3,4]:
@@ -75,7 +75,7 @@ class retry_wrf(config):
       self.wrf_nml['domains']['time_step'
         ] = self.retry_values[self.retry_number]['time_step']
     elif self.retry_number > 4:
-      except Exception('Adjusting time step had no success, wrf.exe still failed')
+      raise Exception('Adjusting time step had no success, wrf.exe still failed')
 
   def write_namelist(self):
     '''
